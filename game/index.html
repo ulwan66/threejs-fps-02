@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BREACHLINE — Tactical FPS</title>
+<link rel="stylesheet" href="./styles.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.min.js"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- Full-screen feedback layers -->
+<div id="damage-vignette"></div>
+<div id="flash-overlay"></div>
+<div id="scope-overlay"><div class="scope-h"></div><div class="scope-v"></div></div>
+
+<!-- In-game HUD -->
+<div id="hud" class="hidden">
+  <div id="crosshair"><span class="cl t"></span><span class="cl b"></span><span class="cl l"></span><span class="cl r"></span><span class="dot"></span></div>
+  <div id="hitmarker" class="hidden"><span></span><span></span><span></span><span></span></div>
+  <div id="dir-indicator" class="hidden"></div>
+
+  <div id="topbar">
+    <div class="team v"><span class="tname">VANGUARD</span><span id="score-v">0</span></div>
+    <div id="clock"><div id="timer">1:40</div><div id="round-label">ROUND 1/13</div></div>
+    <div class="team s"><span id="score-s">0</span><span class="tname">SENTINELS</span></div>
+  </div>
+  <div id="phase-label">BUY PHASE</div>
+  <div id="bomb-bar" class="hidden"><div id="bomb-label">CHARGE PLANTED</div><div class="bar"><div id="bomb-fill"></div></div></div>
+
+  <div id="killfeed"></div>
+
+  <div id="announce" class="hidden"><div id="announce-text"></div><div id="announce-sub"></div></div>
+
+  <canvas id="minimap" width="168" height="128"></canvas>
+
+  <div id="vitals">
+    <div id="health-row"><span id="health-num">100</span><div class="bar"><div id="health-fill" class="fill ok"></div></div><span id="armor-num"></span></div>
+    <div id="charge-tag" class="hidden">◉ CARRYING CHARGE</div>
+  </div>
+
+  <div id="loadout">
+    <div id="weapon-name">P9 SIDEARM</div>
+    <div id="ammo-row"><span id="ammo-mag">12</span><span id="ammo-reserve">/ 48</span></div>
+    <div id="grenade-pips">F×0 L×0 S×0</div>
+    <div id="reload-hint" class="hidden">RELOADING…</div>
+  </div>
+
+  <div id="econ"><span id="money">$800</span><span id="buy-hint">PRESS B — BUY</span></div>
+
+  <div id="channel-bar" class="hidden"><div id="channel-label">PLANTING…</div><div class="bar"><div id="channel-fill"></div></div></div>
+  <div id="plant-hint" class="hidden">HOLD E — PLANT THE CHARGE</div>
+  <div id="down-banner" class="hidden">YOU ARE DOWN</div>
+</div>
+
+<!-- Buy menu -->
+<div id="buy-menu" class="overlay hidden">
+  <div class="panel">
+    <div class="panel-head"><h2>BUY EQUIPMENT</h2><span id="buy-money">$800</span><button id="buy-close" title="Close">✕</button></div>
+    <div id="buy-items"></div>
+    <div id="buy-msg">Re-buying a weapon refills its ammo. Grenade pouch holds 3.</div>
+    <div class="panel-foot">Keys 1–8 buy · B or ESC closes · Window closes shortly after the round starts</div>
+  </div>
+</div>
+
+<!-- Start menu -->
+<div id="start-menu" class="overlay">
+  <div class="panel wide">
+    <h1>BREACHLINE</h1>
+    <p class="tag">Round-based tactical FPS · FOUNDRY-9 · 5v5 bomb defusal against bots</p>
+    <div class="brief">
+      <p><b>You are Vanguard.</b> Plant the breach charge at Site A or Site B and defend it until detonation — or eliminate all five Sentinels. Sentinels win the round if the clock dies or they defuse. First to 7 rounds takes the match.</p>
+      <p>Earn money for kills and round wins. Spend it in the buy menu: rifles, a marksman rifle with a scope, a breaching shotgun, armour, frag, flash and smoke grenades.</p>
+      <p><b>Gunplay:</b> stopping to aim pays. Firing on the move, jumping and long bursts widen your cone; crouching tightens it. Headshots deal up to 4× damage.</p>
+    </div>
+    <div class="controls">
+      <span><b>WASD</b> move</span><span><b>Mouse</b> look</span><span><b>LMB</b> fire / throw</span>
+      <span><b>RMB</b> scope (DMR)</span><span><b>R</b> reload</span><span><b>1 / 2</b> weapons</span>
+      <span><b>3</b> grenade · <b>G</b> throw</span><span><b>E</b> plant (hold)</span><span><b>B</b> buy menu</span>
+      <span><b>Ctrl / C</b> crouch</span><span><b>Shift</b> quiet walk</span><span><b>Space</b> jump</span>
+    </div>
+    <button id="deploy-btn" class="big">▶ DEPLOY</button>
+    <p class="fine">Click locks the mouse. ESC releases it. Sound on for footsteps and the charge beeper.</p>
+  </div>
+</div>
+
+<!-- Pause -->
+<div id="pause-menu" class="overlay hidden">
+  <div class="panel narrow">
+    <h2>PAUSED</h2>
+    <p>Pointer released. The round is frozen.</p>
+    <button id="resume-btn" class="big">RESUME</button>
+  </div>
+</div>
+
+<!-- Match end -->
+<div id="end-menu" class="overlay hidden">
+  <div class="panel narrow">
+    <h2 id="end-title">MATCH OVER</h2>
+    <p id="end-stats"></p>
+    <button id="again-btn" class="big">PLAY AGAIN</button>
+  </div>
+</div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
