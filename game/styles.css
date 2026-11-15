@@ -1,0 +1,150 @@
+/* BREACHLINE — HUD styling. One font stack, one accent, no images: every
+   panel is flat translucent dark, team colours carry the meaning. */
+:root {
+  --amber: #e08a2e;
+  --teal: #3fa7c4;
+  --gold: #ffd27a;
+  --red: #ff5a3c;
+  --ink: rgba(12, 14, 20, 0.78);
+  --line: rgba(255, 210, 122, 0.25);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #141a2e; }
+body { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: #e8e6df; user-select: none; }
+#game { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+.hidden { display: none !important; }
+
+/* Feedback layers */
+#damage-vignette { position: fixed; inset: 0; pointer-events: none; z-index: 5; opacity: 0;
+  background: radial-gradient(ellipse at center, transparent 52%, rgba(200, 20, 10, 0.55) 100%); }
+#flash-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 6; opacity: 0; background: #fff; }
+#scope-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 4;
+  background: radial-gradient(circle at center, transparent 29%, rgba(0, 0, 0, 0.97) 30.5%); }
+#scope-overlay .scope-h, #scope-overlay .scope-v { position: absolute; background: rgba(0, 0, 0, 0.8); }
+#scope-overlay .scope-h { left: 50%; top: 0; width: 1px; height: 100%; transform: translateX(-0.5px); }
+#scope-overlay .scope-v { top: 50%; left: 0; height: 1px; width: 100%; transform: translateY(-0.5px); }
+
+/* Crosshair: four lines whose gap follows the live spread cone */
+#crosshair { --gap: 7px; position: fixed; left: 50%; top: 50%; width: 0; height: 0; z-index: 7; pointer-events: none; }
+#crosshair .cl { position: absolute; background: #f2f5ff; box-shadow: 0 0 2px #000; }
+#crosshair .t { left: -1px; top: calc(-10px - var(--gap)); width: 2px; height: 10px; }
+#crosshair .b { left: -1px; top: var(--gap); width: 2px; height: 10px; }
+#crosshair .l { top: -1px; left: calc(-10px - var(--gap)); height: 2px; width: 10px; }
+#crosshair .r { top: -1px; left: var(--gap); height: 2px; width: 10px; }
+#crosshair .dot { position: absolute; left: -1px; top: -1px; width: 2px; height: 2px; background: #f2f5ff; }
+#hitmarker { position: fixed; left: 50%; top: 50%; width: 0; height: 0; z-index: 8; pointer-events: none; }
+#hitmarker span { position: absolute; width: 2px; height: 9px; background: #fff; box-shadow: 0 0 3px #000; }
+#hitmarker span:nth-child(1) { transform: translate(-8px, -13px) rotate(-45deg); }
+#hitmarker span:nth-child(2) { transform: translate(6px, -13px) rotate(45deg); }
+#hitmarker span:nth-child(3) { transform: translate(-8px, 4px) rotate(45deg); }
+#hitmarker span:nth-child(4) { transform: translate(6px, 4px) rotate(-45deg); }
+#hitmarker.kill span { background: var(--red); height: 12px; }
+#dir-indicator { position: fixed; left: 50%; top: 50%; width: 150px; height: 150px; z-index: 7;
+  pointer-events: none; border-radius: 50%; border: 4px solid transparent; border-top-color: rgba(255, 60, 40, 0.9); }
+
+/* Top bar */
+#topbar { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); display: flex;
+  align-items: stretch; gap: 0; z-index: 10; font-weight: 700; }
+#topbar .team { display: flex; align-items: center; gap: 10px; padding: 6px 14px; background: var(--ink);
+  border: 1px solid var(--line); font-size: 15px; letter-spacing: 1px; }
+#topbar .team.v { border-right: none; border-radius: 4px 0 0 4px; }
+#topbar .team.v .tname { color: var(--amber); }
+#topbar .team.s { border-left: none; border-radius: 0 4px 4px 0; }
+#topbar .team.s .tname { color: var(--teal); }
+#topbar .team span[id] { font-size: 20px; min-width: 18px; text-align: center; }
+#clock { text-align: center; padding: 4px 18px; background: var(--ink); border: 1px solid var(--line); }
+#timer { font-size: 22px; font-variant-numeric: tabular-nums; line-height: 1.1; }
+#timer.urgent { color: var(--red); }
+#round-label { font-size: 10px; letter-spacing: 2px; color: #b9b4a6; }
+#phase-label { position: fixed; top: 66px; left: 50%; transform: translateX(-50%); z-index: 10;
+  font-size: 11px; letter-spacing: 3px; color: var(--gold); text-shadow: 0 1px 3px #000; }
+#bomb-bar { position: fixed; top: 88px; left: 50%; transform: translateX(-50%); width: 300px;
+  z-index: 10; text-align: center; }
+#bomb-label { font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #ffb0a0; text-shadow: 0 1px 3px #000; margin-bottom: 3px; }
+.bar { height: 8px; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 2px; overflow: hidden; }
+#bomb-fill { height: 100%; background: var(--red); width: 100%; }
+
+/* Killfeed + announcements */
+#killfeed { position: fixed; top: 14px; right: 16px; z-index: 10; text-align: right; font-size: 13px; }
+#killfeed .kf { background: var(--ink); border: 1px solid var(--line); border-radius: 3px;
+  padding: 3px 9px; margin-bottom: 4px; }
+#killfeed .kf.vanguard { border-left: 3px solid var(--amber); }
+#killfeed .kf.sentinel { border-left: 3px solid var(--teal); }
+#announce { position: fixed; top: 24%; left: 50%; transform: translateX(-50%); text-align: center;
+  z-index: 10; pointer-events: none; text-shadow: 0 2px 8px #000; }
+#announce-text { font-size: 34px; font-weight: 800; letter-spacing: 4px; color: var(--gold); }
+#announce-sub { font-size: 14px; color: #d8d4c8; margin-top: 4px; }
+
+/* Minimap */
+#minimap { position: fixed; left: 16px; bottom: 16px; z-index: 10; border: 1px solid var(--line); border-radius: 4px; }
+
+/* Vitals + loadout + economy */
+#vitals { position: fixed; left: 200px; bottom: 16px; z-index: 10; }
+#health-row { display: flex; align-items: center; gap: 10px; }
+#health-num { font-size: 34px; font-weight: 800; min-width: 58px; text-shadow: 0 1px 4px #000; }
+#health-row .bar { width: 170px; height: 12px; }
+#health-fill { height: 100%; }
+#health-fill.ok { background: #7fc86a; }
+#health-fill.low { background: var(--gold); }
+#health-fill.crit { background: var(--red); }
+#armor-num { color: #9fe8ff; font-weight: 700; }
+#charge-tag { margin-top: 5px; font-size: 12px; font-weight: 700; letter-spacing: 1px; color: var(--red); text-shadow: 0 1px 3px #000; }
+#loadout { position: fixed; right: 16px; bottom: 16px; z-index: 10; text-align: right; text-shadow: 0 1px 4px #000; }
+#weapon-name { font-size: 14px; letter-spacing: 2px; color: var(--gold); font-weight: 700; }
+#ammo-row { font-variant-numeric: tabular-nums; }
+#ammo-mag { font-size: 38px; font-weight: 800; }
+#ammo-reserve { font-size: 18px; color: #b9b4a6; margin-left: 4px; }
+#grenade-pips { font-size: 12px; letter-spacing: 1px; color: #cfcabd; }
+#reload-hint { font-size: 12px; font-weight: 700; color: var(--gold); letter-spacing: 1px; margin-top: 2px; }
+#econ { position: fixed; right: 16px; bottom: 118px; z-index: 10; text-align: right; }
+#money { font-size: 22px; font-weight: 800; color: #a8e6a1; text-shadow: 0 1px 4px #000; }
+#buy-hint { display: block; font-size: 11px; letter-spacing: 2px; color: var(--gold); margin-top: 2px; }
+#channel-bar { position: fixed; left: 50%; bottom: 22%; transform: translateX(-50%); width: 260px; z-index: 10; text-align: center; }
+#channel-label { font-size: 13px; font-weight: 700; letter-spacing: 2px; margin-bottom: 4px; text-shadow: 0 1px 3px #000; }
+#channel-fill { height: 100%; background: var(--gold); width: 0; }
+#plant-hint { position: fixed; left: 50%; bottom: 19%; transform: translateX(-50%); z-index: 10;
+  font-size: 14px; font-weight: 700; letter-spacing: 2px; color: var(--gold); text-shadow: 0 1px 3px #000; }
+#down-banner { position: fixed; left: 50%; bottom: 14%; transform: translateX(-50%); z-index: 10;
+  font-size: 15px; font-weight: 700; letter-spacing: 2px; color: #ff8a76; text-shadow: 0 1px 3px #000; }
+
+/* Overlays / menus */
+.overlay { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
+  background: rgba(8, 10, 16, 0.72); backdrop-filter: blur(2px); }
+.panel { background: #16181f; border: 1px solid var(--line); border-radius: 8px; padding: 26px 30px;
+  width: 560px; max-width: calc(100vw - 40px); max-height: calc(100vh - 40px); overflow-y: auto;
+  box-shadow: 0 12px 50px rgba(0, 0, 0, 0.6); }
+.panel.wide { width: 680px; }
+.panel.narrow { width: 420px; text-align: center; }
+.panel h1 { font-size: 44px; letter-spacing: 8px; color: var(--gold); text-align: center; }
+.panel h2 { font-size: 24px; letter-spacing: 3px; color: var(--gold); }
+.tag { text-align: center; color: #b9b4a6; font-size: 13px; letter-spacing: 1px; margin: 4px 0 16px; }
+.brief p { font-size: 14px; line-height: 1.55; margin-bottom: 10px; color: #d8d4c8; }
+.brief b { color: #fff; }
+.controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px 14px; font-size: 12.5px;
+  color: #b9b4a6; margin: 14px 0 20px; }
+.controls b { color: var(--gold); }
+button.big { display: block; margin: 6px auto 0; padding: 13px 46px; font-size: 18px; font-weight: 800;
+  letter-spacing: 3px; color: #161207; background: var(--gold); border: none; border-radius: 5px; cursor: pointer; }
+button.big:hover { background: #ffe1a1; }
+.fine { text-align: center; font-size: 12px; color: #8d897c; margin-top: 14px; }
+
+/* Buy menu */
+.panel-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.panel-head h2 { flex: 1; }
+#buy-money { font-size: 20px; font-weight: 800; color: #a8e6a1; }
+#buy-close { background: none; border: 1px solid var(--line); color: #e8e6df; border-radius: 4px;
+  width: 30px; height: 30px; cursor: pointer; font-size: 14px; }
+#buy-items { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.buy-item { display: grid; grid-template-columns: 22px 1fr auto; grid-template-rows: auto auto;
+  gap: 1px 8px; align-items: center; text-align: left; padding: 9px 11px; cursor: pointer;
+  background: #1e212b; border: 1px solid #33363f; border-radius: 5px; color: #e8e6df; font-size: 13px; }
+.buy-item:hover { border-color: var(--gold); }
+.buy-item.cant { opacity: 0.45; }
+.buy-item.owned { border-color: var(--amber); }
+.buy-key { grid-row: span 2; font-weight: 800; color: var(--gold); border: 1px solid var(--line);
+  border-radius: 3px; text-align: center; padding: 3px 0; }
+.buy-name { font-weight: 700; letter-spacing: 0.5px; }
+.buy-desc { grid-column: 2; font-size: 11px; color: #9a968a; }
+.buy-price { grid-row: span 2; font-weight: 800; color: #a8e6a1; }
+#buy-msg { margin-top: 12px; font-size: 13px; color: var(--gold); min-height: 18px; }
+.panel-foot { margin-top: 6px; font-size: 11.5px; color: #8d897c; }
